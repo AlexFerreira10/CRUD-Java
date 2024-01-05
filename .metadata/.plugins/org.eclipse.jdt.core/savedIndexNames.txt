@@ -1,0 +1,1 @@
+INDEX VERSION 1.134+C:\ED1-Java\CRUD_JAVA1\.metadata\.plugins\org.eclipse.jdt.core
