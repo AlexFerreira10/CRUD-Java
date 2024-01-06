@@ -33,10 +33,6 @@ public class List {
 		return startNode;
 	}
 
-//I guess that won'nt use it
-	/*
-	 * public void setStartNode(Node startNode) { this.startNode = startNode; }
-	 */
 	public int getCounter() {
 		return counter;
 	}
@@ -89,41 +85,34 @@ public class List {
 		counter++;
 	}
 	
-	public void edit(int searchedValue) throws DomainException, ParseException {
-		if (startNode != null) {
-			Node aux = sequentialSearch(searchedValue);
-			System.out.print("Enter a new registration: ");
-			int registration = sc.nextInt();
-			System.out.print("Enter a new data: ");
-			Date date = sdf.parse(sc.next());
-			aux.setRegistration(registration);
-			aux.setDate(date);
-			
-		} else {
-			throw new DomainException("There aren't suficient nodes in the list! ");
-		}
-		
+	public void edit(int searchedValue) throws DomainException, ParseException  {
+	
+		Node aux = sequentialSearch(searchedValue);
+		System.out.print("Enter a new registration: ");
+		int registration = sc.nextInt();
+		System.out.print("Enter a new data: ");
+		Date date = sdf.parse(sc.next());
+		aux.setRegistration(registration);
+		aux.setDate(date);
+
 	}
 	
 	public void remove(int searchedValue) throws DomainException {
-		if (startNode != null) {
-			Node aux = sequentialSearch(searchedValue);
-			//Case 1: Exist only node in the list
-			if(startNode.getNextNode() == null) {
-				startNode = null;
-			}
-			//Case 2: Exist there are node in the list
-			else{
-				Node aux2 = startNode;
-				while(aux2.getNextNode().getRegistration() != searchedValue || aux2.getRegistration() == searchedValue ) {
-					aux2 = aux2.getNextNode();
-				}
-				aux2.setNextNode(aux.getNextNode());
-				aux = null;
-			}
-		} else {
-			throw new DomainException("There aren't suficient nodes in the list! ");
+		sequentialSearch(searchedValue);// Confirm if there is this node
+		Node aux = startNode;
+		
+		// Case 1: There is only node in the list
+		if (startNode.getRegistration() == searchedValue) {
+			startNode = startNode.getNextNode();
 		}
+		// Case 2: There are several node in this list
+		else {
+			while (aux.getNextNode().getRegistration() != searchedValue) {
+				aux = aux.getNextNode();
+			}
+			aux.setNextNode(aux.getNextNode().getNextNode());
+		}
+		counter--;
 	}
 	
 	public Node sequentialSearch(int searchedValue) throws DomainException {
@@ -143,6 +132,33 @@ public class List {
 			throw new DomainException("There aren't suficient nodes in the list! ");
 		}
 	}
+		
+	public void bubbleSort() {
+	    for (int i = 0; i < counter - 1; i++) {
+	        Node aux = startNode;
+	        while (aux != null && aux.getNextNode() != null) {
+	            if (aux.getRegistration() > aux.getNextNode().getRegistration()) {
+	                Node aux2 = aux.getNextNode();
+	                aux.setNextNode(aux2.getNextNode());
+	                aux2.setNextNode(aux);
+
+	                // Atualize a referência do início se o nó movido for o primeiro nó
+	                if (startNode == aux) {
+	                    startNode = aux2;
+	                } else {
+	                    Node prevAux = startNode;
+	                    while (prevAux.getNextNode() != aux) {
+	                        prevAux = prevAux.getNextNode();
+	                    }
+	                    prevAux.setNextNode(aux2);
+	                }
+	                aux = aux2; // Atualize a posição de 'aux'
+	            }
+	            aux = aux.getNextNode();
+	        }
+	    }
+	}
+
 
 	public void print() throws DomainException {
 		Node aux = startNode;
@@ -158,8 +174,7 @@ public class List {
 	}
 	
 	public void menu() throws ParseException {
-		int opcao = 0;
-
+		int option = 0;
 		do {
 			System.out.println("-------- List --------");
 			StringBuilder sb = new StringBuilder();
@@ -179,7 +194,8 @@ public class List {
 			sb.append("[ 14 ] Exit\n");
 			sb.append("Escolha uma opção: ");
 			System.out.println(sb);
-			int option = sc.nextInt();
+			option = sc.nextInt();
+			
 			try {
 				switch (option) {
 				case 1:// addBeginning
@@ -226,10 +242,10 @@ public class List {
 					System.out.println(aux);
 					break;
 				case 8:
-
+					
 					break;
 				case 9:
-
+					bubbleSort();
 					break;
 				case 10:
 
@@ -241,11 +257,10 @@ public class List {
 
 					break;
 				case 13:
-					opcao = 13;
-
+					
 					break;
 				case 14:
-
+					option = 13;
 					break;
 				default:
 					System.out.println("Invalid digit!");
@@ -253,10 +268,7 @@ public class List {
 			} catch (DomainException a) {
 				System.out.println("Error: " + a.getMessage());
 			}
-			finally {
-				//sc.close();
-			}
-			
-		} while (opcao != 13);
+	
+		} while (option != 14);
 	}
 }
