@@ -21,6 +21,11 @@ public class List {
 		super();
 		this.sc = sc;
 	}
+	
+	public List(Node startNode) {
+		super();
+		this.startNode = startNode;
+	}
 
 	public List(Node startNode, int counter, Scanner sc) {
 		super();
@@ -31,6 +36,10 @@ public class List {
 
 	public Node getStartNode() {
 		return startNode;
+	}
+
+	public void setStartNode(Node startNode) {
+		this.startNode = startNode;
 	}
 
 	public int getCounter() {
@@ -65,10 +74,11 @@ public class List {
 
 			node.setNextNode(aux.getNextNode());
 			aux.setNextNode(node);
+			counter++;
+			System.out.println("Node added!");
 		} else {
 			throw new DomainException("There aren't suficient nodes in the list! ");
 		}
-		counter++;
 	}
 
 	public void addTheEnd(Node node) throws DomainException {
@@ -79,26 +89,29 @@ public class List {
 			}
 			aux.setNextNode(node);
 			node.setNextNode(null);
+			
+			counter++;
+			System.out.println("Node added!");
 		} else {
 			throw new DomainException("There aren't suficient nodes in the list! ");
 		}
-		counter++;
 	}
 	
 	public void edit(int searchedValue) throws DomainException, ParseException  {
 	
-		Node aux = sequentialSearch(searchedValue);
+		Node aux = search(searchedValue);
 		System.out.print("Enter a new registration: ");
 		int registration = sc.nextInt();
 		System.out.print("Enter a new data: ");
 		Date date = sdf.parse(sc.next());
 		aux.setRegistration(registration);
 		aux.setDate(date);
+		System.out.println("Update data node! ");
 
 	}
 	
 	public void remove(int searchedValue) throws DomainException {
-		sequentialSearch(searchedValue);// Confirm if there is this node
+		search(searchedValue);// Confirm if there is this node
 		Node aux = startNode;
 		
 		// Case 1: There is only node in the list
@@ -113,12 +126,13 @@ public class List {
 			aux.setNextNode(aux.getNextNode().getNextNode());
 		}
 		counter--;
+		System.out.println("Node removed!");
 	}
 	
-	public Node sequentialSearch(int searchedValue) throws DomainException {
+	public Node search(int target) throws DomainException {
 		Node aux = startNode;
 		if(startNode != null) {
-			while(aux != null && aux.getRegistration() != searchedValue) {
+			while(aux != null && aux.getRegistration() != target) {
 				aux = aux.getNextNode();
 			}
 			if(aux == null) {
@@ -132,33 +146,42 @@ public class List {
 			throw new DomainException("There aren't suficient nodes in the list! ");
 		}
 	}
-		
-	public void bubbleSort() {
-	    for (int i = 0; i < counter - 1; i++) {
-	        Node aux = startNode;
-	        while (aux != null && aux.getNextNode() != null) {
-	            if (aux.getRegistration() > aux.getNextNode().getRegistration()) {
-	                Node aux2 = aux.getNextNode();
-	                aux.setNextNode(aux2.getNextNode());
-	                aux2.setNextNode(aux);
 
-	                // Atualize a referência do início se o nó movido for o primeiro nó
-	                if (startNode == aux) {
-	                    startNode = aux2;
+	public void bubbleSort() {
+	    for (int i = 0; i < counter; i++) {
+	        Node currentNode = startNode;
+	        Node previousNode = null;
+
+	        while (currentNode != null && currentNode.getNextNode() != null) {
+	            Node nextNode = currentNode.getNextNode();
+
+	            if (currentNode.getRegistration() > nextNode.getRegistration()) {
+	                //If the swap is between the first two nodes
+	                if (previousNode == null) {
+	                    startNode = nextNode;
 	                } else {
-	                    Node prevAux = startNode;
-	                    while (prevAux.getNextNode() != aux) {
-	                        prevAux = prevAux.getNextNode();
-	                    }
-	                    prevAux.setNextNode(aux2);
+	                    previousNode.setNextNode(nextNode);
 	                }
-	                aux = aux2; // Atualize a posição de 'aux'
+
+	                // Swap between node
+	                currentNode.setNextNode(nextNode.getNextNode());
+	                nextNode.setNextNode(currentNode);
+	                
+	                // Update reference from previous node to next swapped node
+	                previousNode = nextNode;
+	            } else {
+	                previousNode = currentNode;
+	                currentNode = nextNode;
 	            }
-	            aux = aux.getNextNode();
 	        }
 	    }
+	    System.out.println("List is ordered!");
 	}
-
+	
+	public void clean() {
+		startNode = null;
+		System.out.println("Lista is empty!");
+	}
 
 	public void print() throws DomainException {
 		Node aux = startNode;
@@ -176,6 +199,7 @@ public class List {
 	public void menu() throws ParseException {
 		int option = 0;
 		do {
+			System.out.println();
 			System.out.println("-------- List --------");
 			StringBuilder sb = new StringBuilder();
 			sb.append("[ 1 ] Insert (Begnning)\n");
@@ -185,39 +209,38 @@ public class List {
 			sb.append("[ 5 ] Remove\n");
 			sb.append("[ 6 ] Print\n");
 			sb.append("[ 7 ] Search(Sequential)\n");
-			sb.append("[ 8 ] Search(Binária)\n");
-			sb.append("[ 9 ] Sort (BubleSort)\n");
-			sb.append("[ 10 ] Sort (CollectionsSort)\n");
-			sb.append("[ 11 ] Sort (QuickSort)\n");
-			sb.append("[ 12 ] Clean\n");
-			sb.append("[ 13 ] Save\n");
-			sb.append("[ 14 ] Exit\n");
+			sb.append("[ 8 ] Sort (BubleSort)\n");
+			sb.append("[ 9 ] Sort (MergeSort)\n");
+			sb.append("[ 10 ] Clean\n");
+			sb.append("[ 11 ] Save\n");
+			sb.append("[ 12 ] Exit\n");
 			sb.append("Escolha uma opção: ");
 			System.out.println(sb);
+			System.out.print("Option: ");
 			option = sc.nextInt();
-			
+		
 			try {
 				switch (option) {
 				case 1:// addBeginning
-					System.out.print("Which registration?");
+					System.out.print("Which registration? ");
 					int registration = sc.nextInt();
-					System.out.print("Which date?");
+					System.out.print("Which date? ");
 					Date date = sdf.parse(sc.next());
 					Node node = new Node(registration,date);
 					addBeginning(node);
 					break;
 				case 2:
-					System.out.print("Which registration?");
+					System.out.print("Which registration? ");
 					registration = sc.nextInt();
-					System.out.print("Which date?");
+					System.out.print("Which date? ");
 					date = sdf.parse(sc.next());
 					node = new Node(registration,date);
 					addMiddle(node);
 					break;
 				case 3:
-					System.out.print("Which registration?");
+					System.out.print("Which registration? ");
 					registration = sc.nextInt();
-					System.out.print("Which date?");
+					System.out.print("Which date? ");
 					date = sdf.parse(sc.next());
 					node = new Node(registration,date);
 					addTheEnd(node);
@@ -236,31 +259,25 @@ public class List {
 					print();
 					break;
 				case 7:
-					System.out.println("Which registration?");
+					System.out.println("Which registration? ");
 					registration = sc.nextInt();
-					Node aux = sequentialSearch(registration);
+					Node aux = search(registration);
 					System.out.println(aux);
 					break;
 				case 8:
-					
-					break;
-				case 9:
 					bubbleSort();
 					break;
+				case 9:
+					//mergeSort
+					break;
 				case 10:
-
+					//salve
 					break;
 				case 11:
-
+					clean();
 					break;
 				case 12:
-
-					break;
-				case 13:
-					
-					break;
-				case 14:
-					option = 13;
+					option = 12;
 					break;
 				default:
 					System.out.println("Invalid digit!");
@@ -268,7 +285,7 @@ public class List {
 			} catch (DomainException a) {
 				System.out.println("Error: " + a.getMessage());
 			}
-	
-		} while (option != 14);
+			System.out.println("----------------------");
+		} while (option != 12);
 	}
 }

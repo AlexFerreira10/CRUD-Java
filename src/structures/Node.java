@@ -8,6 +8,11 @@ public class Node {
 	private Date date;
 	private Node nextNode;
 	
+	public Node(int registration) {
+		super();
+		this.registration = registration;
+	}
+	
 	public Node(int registration, Date date) {
 		super();
 		this.registration = registration;
