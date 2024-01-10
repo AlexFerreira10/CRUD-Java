@@ -8,8 +8,8 @@ import java.util.Scanner;
 import structures.exceptions.DomainException;
 
 public class List {
-	private Node startNode;
-	private int counter;
+	private static Node startNode;
+	private static int counter;
 	private Scanner sc;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -24,13 +24,13 @@ public class List {
 	
 	public List(Node startNode) {
 		super();
-		this.startNode = startNode;
+		List.startNode = startNode;
 	}
 
 	public List(Node startNode, int counter, Scanner sc) {
 		super();
-		this.startNode = startNode;
-		this.counter = counter;
+		List.startNode = startNode;
+		List.counter = counter;
 		this.sc = sc;
 	}
 
@@ -39,7 +39,7 @@ public class List {
 	}
 
 	public void setStartNode(Node startNode) {
-		this.startNode = startNode;
+		List.startNode = startNode;
 	}
 
 	public int getCounter() {
@@ -47,7 +47,7 @@ public class List {
 	}
 
 	public void setCounter(int counter) {
-		this.counter = counter;
+		List.counter = counter;
 	}
 
 	public void addBeginning(Node node) {
@@ -81,7 +81,9 @@ public class List {
 		}
 	}
 
-	public void addTheEnd(Node node) throws DomainException {
+	//verificar se ha uma logica melhor, para nao precisar utilizar variaveis estaticas
+	//fiz essas modificacoes por causa da classe de arquivos
+	public static void addTheEnd(Node node) throws DomainException  {
 		Node aux = startNode;
 		if (startNode != null) {
 			while (aux.getNextNode() != null) {
@@ -92,8 +94,10 @@ public class List {
 			
 			counter++;
 			System.out.println("Node added!");
-		} else {
-			throw new DomainException("There aren't suficient nodes in the list! ");
+		} else { //improve this later
+			node.setNextNode(startNode);
+			startNode = node;
+			counter++;
 		}
 	}
 	
@@ -129,6 +133,19 @@ public class List {
 		System.out.println("Node removed!");
 	}
 	
+	public void print() throws DomainException {
+		Node aux = startNode;
+		if (startNode != null) {
+			while (aux != null) {
+				System.out.println(aux);
+				aux = aux.getNextNode();
+			}
+			System.out.println("Quantify of node: " + counter);
+		} else {
+			throw new DomainException("There aren't suficient nodes in the list! ");
+		}
+	}
+
 	public Node search(int target) throws DomainException {
 		Node aux = startNode;
 		if(startNode != null) {
@@ -177,23 +194,81 @@ public class List {
 	    }
 	    System.out.println("List is ordered!");
 	}
+
+	public void mergeSort() throws DomainException{
+		
+		if(startNode != null) {
+			startNode = mergeSort(startNode);
+			System.out.println("List is ordered!");
+		}
+		else {
+			throw new DomainException("There aren't suficient nodes in the list! ");
+		}
+	}
+	
+	private Node mergeSort(Node head) {
+		if (head == null || head.getNextNode() == null) {
+			return head;
+		}
+
+		// Split the list in half; half = metade
+		Node middle = getMiddle(head);
+		Node nextToMiddle = middle.getNextNode();
+		middle.setNextNode(null);
+
+		// Recursively sort the two halves
+		Node left = mergeSort(head);
+		Node right = mergeSort(nextToMiddle);
+
+		// Merge the two ordered halves
+		return merge(left, right);
+
+	}
+
+	private Node merge(Node left, Node right) {
+		Node result = null;
+		// Choose the smallest value between left and right
+		 if (left == null) {
+	            return right;
+	        } else if (right == null) {
+	            return left;
+	        }
+
+		 	// Choose the smallest value between left and right
+	        if (left.getRegistration() <= right.getRegistration()) {
+	            result = left;
+	            result.setNextNode(merge(left.getNextNode(), right));
+	        } else {
+	            result = right;
+	            result.setNextNode(merge(left, right.getNextNode()));
+	        }
+
+	        return result;
+	}
+
+	private Node getMiddle(Node head) {
+		// Could also do a for loop until counter/2
+		 if (head == null) {
+	            return null;
+	        }
+
+	        Node slow = head;
+	        Node fast = head.getNextNode();
+
+	        while (fast != null) {
+	            fast = fast.getNextNode();
+	            if (fast != null) {
+	                slow = slow.getNextNode();
+	                fast = fast.getNextNode();
+	            }
+	        }
+
+	        return slow;
+	}
 	
 	public void clean() {
 		startNode = null;
 		System.out.println("Lista is empty!");
-	}
-
-	public void print() throws DomainException {
-		Node aux = startNode;
-		if (startNode != null) {
-			while (aux != null) {
-				System.out.println(aux);
-				aux = aux.getNextNode();
-			}
-			System.out.println("Quantify of node: " + counter);
-		} else {
-			throw new DomainException("There aren't suficient nodes in the list! ");
-		}
 	}
 	
 	public void menu() throws ParseException {
@@ -202,7 +277,7 @@ public class List {
 			System.out.println();
 			System.out.println("-------- List --------");
 			StringBuilder sb = new StringBuilder();
-			sb.append("[ 1 ] Insert (Begnning)\n");
+			sb.append("[ 1 ] Insert (Beginning)\n");
 			sb.append("[ 2 ] Insert (Middle)\n");
 			sb.append("[ 3 ] Insert (The end)\n");
 			sb.append("[ 4 ] Edit\n");
@@ -268,7 +343,7 @@ public class List {
 					bubbleSort();
 					break;
 				case 9:
-					//mergeSort
+					mergeSort();
 					break;
 				case 10:
 					//salve
