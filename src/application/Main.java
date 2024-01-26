@@ -1,43 +1,37 @@
 package application;
 
 import java.text.ParseException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
+
 import structures.List;
 import structures.exceptions.DomainException;
 import structures.files.CSV;
 
-//Consertar entrada e entrada e saida e add o generics
 public class Main {
-	public static void main(String[] args) throws ParseException, DomainException {
-		// TODO Auto-generated method stub
-		// check if is good put vector
-		// read file and check status list
+	public static void main(String[] args)  {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("-------- Main Menu --------");
-		System.out.println("Do you want to use? ");
-		System.out.println("[ 1 ] List");
-		System.out.println("[ 2 ] Queue");
-		System.out.println("[ 3 ] Stack");
-		System.out.print("Option: ");
-		int option = sc.nextInt();
-		System.out.println("---------------------------");
+		List list = new List();
+		MenuList menu = new MenuList(list, sc);
 		
-		switch (option) {
-		case 1:
-			// new list = file
-			List list = new List(sc);
+		try {
 			list = CSV.read(list, "./data/List.CSV");
-			list.menu();
-			break;
-		case 2:
-			// Queue
-			break;
-		case 3:
-			// Stack
-			break;
-		default:
-			System.out.println("Invalid Digit! ");
+			menu.menu();
 		}
-		sc.close();
+		catch(InputMismatchException e) {
+			System.out.println("Error: " + e.getMessage());
+			sc.nextLine();
+		} catch (ParseException e) {
+			System.out.println("Error: " + e.getMessage());
+			e.printStackTrace();
+			sc.nextLine();
+		} catch (DomainException e) {
+			System.out.println("Error: " + e.getMessage());
+			e.printStackTrace();
+			sc.nextLine();
+		}
+		finally {
+			sc.close();
+		}
 	}
 }

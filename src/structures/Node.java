@@ -6,18 +6,18 @@ public class Node {
 	private Integer registration;
 	private LocalDate date;
 	private Node nextNode;
-	
+
 	public Node(int registration) {
 		super();
 		this.registration = registration;
 	}
-	
+
 	public Node(int registration, LocalDate date) {
 		super();
 		this.registration = registration;
 		this.date = date;
 	}
-	
+
 	public Node(int registration, Node nextNode) {
 		super();
 		this.registration = registration;
@@ -49,7 +49,6 @@ public class Node {
 	}
 
 	@Override
-	//consertar saida data
 	public String toString() {
 		return "Node [registration=" + registration + ", date= " + date + "]";
 	}
