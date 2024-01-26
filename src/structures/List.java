@@ -1,18 +1,19 @@
 package structures;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 import structures.exceptions.DomainException;
+import structures.files.CSV;
 
 public class List {
 	private static Node startNode;
 	private static int counter;
 	private Scanner sc;
 	
-	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	
 	public List() {
 	}
@@ -83,7 +84,7 @@ public class List {
 
 	//verificar se ha uma logica melhor, para nao precisar utilizar variaveis estaticas
 	//fiz essas modificacoes por causa da classe de arquivos
-	public static void addTheEnd(Node node) throws DomainException  {
+	public void addTheEnd(Node node) throws DomainException  {
 		Node aux = startNode;
 		if (startNode != null) {
 			while (aux.getNextNode() != null) {
@@ -107,7 +108,7 @@ public class List {
 		System.out.print("Enter a new registration: ");
 		int registration = sc.nextInt();
 		System.out.print("Enter a new data: ");
-		Date date = sdf.parse(sc.next());
+		LocalDate date = LocalDate.parse(sc.nextLine(), dtf);
 		aux.setRegistration(registration);
 		aux.setDate(date);
 		System.out.println("Update data node! ");
@@ -273,6 +274,7 @@ public class List {
 	
 	public void menu() throws ParseException {
 		int option = 0;
+		
 		do {
 			System.out.println();
 			System.out.println("-------- List --------");
@@ -300,7 +302,8 @@ public class List {
 					System.out.print("Which registration? ");
 					int registration = sc.nextInt();
 					System.out.print("Which date? ");
-					Date date = sdf.parse(sc.next());
+					sc.nextLine();
+					LocalDate date = LocalDate.parse(sc.next(), dtf);
 					Node node = new Node(registration,date);
 					addBeginning(node);
 					break;
@@ -308,7 +311,8 @@ public class List {
 					System.out.print("Which registration? ");
 					registration = sc.nextInt();
 					System.out.print("Which date? ");
-					date = sdf.parse(sc.next());
+					sc.nextLine();
+					date = LocalDate.parse(sc.next(), dtf);
 					node = new Node(registration,date);
 					addMiddle(node);
 					break;
@@ -316,14 +320,15 @@ public class List {
 					System.out.print("Which registration? ");
 					registration = sc.nextInt();
 					System.out.print("Which date? ");
-					date = sdf.parse(sc.next());
+					sc.nextLine();
+					date = LocalDate.parse(sc.next(), dtf);
 					node = new Node(registration,date);
 					addTheEnd(node);
 					break;
 				case 4:
 					System.out.print("Which registration do you want to change? ");
 					registration = sc.nextInt();
-					edit(registration );
+					edit(registration);
 					break;
 				case 5:
 					System.out.print("Which registration do you want to remove? ");
@@ -346,10 +351,10 @@ public class List {
 					mergeSort();
 					break;
 				case 10:
-					//salve
+					clean();
 					break;
 				case 11:
-					clean();
+					CSV.write(startNode, "./data/List.CSV");
 					break;
 				case 12:
 					option = 12;

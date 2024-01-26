@@ -1,11 +1,10 @@
 package structures;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Node {
 	private Integer registration;
-	private Date date;
+	private LocalDate date;
 	private Node nextNode;
 	
 	public Node(int registration) {
@@ -13,7 +12,7 @@ public class Node {
 		this.registration = registration;
 	}
 	
-	public Node(int registration, Date date) {
+	public Node(int registration, LocalDate date) {
 		super();
 		this.registration = registration;
 		this.date = date;
@@ -41,19 +40,17 @@ public class Node {
 		this.nextNode = nextNode;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 
 	@Override
 	//consertar saida data
 	public String toString() {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		String formattedDate = sdf.format(date);
-		return "Node [registration=" + registration + ", date= " + formattedDate + "]";
+		return "Node [registration=" + registration + ", date= " + date + "]";
 	}
 }
